@@ -2,6 +2,8 @@ from PPlay.window import *
 from PPlay.gameimage import *
 from PPlay.animation import *
 from PPlay.sound import *
+from manual import *
+from gameplay import *
 
 # config tela
 janela = Window(1200, 700)
@@ -48,6 +50,10 @@ def animacao_seletor(botao):
     selector_left.draw()
     selector_left.update()
 
+def animacao_selecao_peca(animated_button):
+    animated_button.draw()
+    animated_button.update()
+
 while True:
 
     fundo_tela.draw()
@@ -58,26 +64,51 @@ while True:
     if (mouse.is_over_object(play_button)):
         animacao_seletor(play_button)
         if mouse.is_button_pressed(1):
+            title = GameImage("assets/menu/choose_color.png")
+            title.set_position(janela.width/2 - title.width/2, 0)
+
+            whites = Animation("assets/menu/whites.png", 2)
+            blacks = Animation("assets/menu/blacks.png", 2)
+
+            whites.set_total_duration(500)
+            blacks.set_total_duration(500)
+
+            whites.set_position(100, janela.height/2 - whites.height/2)
+            blacks.set_position(janela.width - 100 - blacks.width, janela.height/2 - blacks.height/2)
+
+            choosen_color = None
+            while choosen_color == None:
+                fundo_tela.draw()
+                title.draw()
+                whites.draw()
+                blacks.draw()
+                
+                if mouse.is_over_object(whites):
+                    animacao_selecao_peca(whites)
+                    if mouse.is_button_pressed(1):
+                        choosen_color = "W"
+                elif mouse.is_over_object(blacks):
+                    animacao_selecao_peca(blacks)
+                    animacao_selecao_peca(blacks)
+                    if mouse.is_button_pressed(1):
+                        choosen_color = "B"
+                janela.update()
+                
             soundtrack.stop()
             sound_effect.play()
             while fundo_tela.get_curr_frame() < 36:
                 fundo_tela.draw()
                 fundo_tela.update()
                 janela.update()
-            # game = gameplay()
-            # game.run()
-
-            janela.set_background_color((0,0,0))
-            janela.draw_text("Gameplay...", 0, 0, size=30, color=(255,255,255))
-            janela.update()
-            janela.delay(1500)
-            janela.close()
+            
+            game = Gameplay(choosen_color, janela, mouse)
+            game.loop()
 
     elif (mouse.is_over_object(manual_button)):
         animacao_seletor(manual_button)
         if mouse.is_button_pressed(1):
-            pass
-            # game = manual()
+            game = Manual(janela, mouse)
+            game.loop()
             
     elif (mouse.is_over_object(quit_button)):
         animacao_seletor(quit_button)
