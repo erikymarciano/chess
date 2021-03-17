@@ -7,10 +7,19 @@ class Pawn(Piece):
     
     # position eh uma tupla coordenada (linha,coluna)
     def move(self, position, board):
+        possible_moves = []
+        
+        x = position[0] + self.direction
+        y = position[1]
 
-        possible_moves = [(position[0] + self.direction, position[1])]
+        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
+
+        possible_moves.append((position[0] + self.direction, position[1]))
         # se o peao ainda n se moveu, ele pode andar duas casas
-        if self.moved == 0:
+        if not self.moved:
+            x = position[0] + 2*self.direction
+            if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
+
             possible_moves.append((position[0] + 2 * self.direction, position[1]))
         
         return possible_moves
