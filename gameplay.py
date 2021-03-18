@@ -54,6 +54,7 @@ class Gameplay():
                         self.board.board_state[index[0]][index[1]] = piece
                         
                         piece.moved = True # a peca fez pelo menos 1 movimento
+                        self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
                         return True # o jogador realizou uma jogada
                     else:

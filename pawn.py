@@ -29,13 +29,13 @@ class Pawn(Piece):
         possible_attacks = []
         x = position[0] + self.direction
         y = position[1] + 1
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if 0 <= x <= 7 and 0 <= y <= 7:
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         y = position[1] - 1
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if 0 <= x <= 7 and 0 <= y <= 7:
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         return possible_attacks
