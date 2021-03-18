@@ -10,43 +10,51 @@ class King(Piece):
 
         x = position[0] + 1
         y = position[1]
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] + 1, position[y])
+        if x >= 0 and x <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0] - 1
         y = position[1]
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] - 1, position[y])
+        if x >= 0 and x <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0]
         y = position[1] + 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0], position[y] + 1)
+        if y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0]
         y = position[1] - 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0], position[y] - 1)
+        if y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0] + 1
         y = position[1] + 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] + 1, position[y] + 1)
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0] - 1
         y = position[1] + 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] - 1, position[y] + 1)
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0] + 1
         y = position[1] - 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] + 1, position[y] - 1)
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         x = position[0] - 1
         y = position[1] - 1
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
-        possible_moves.append(position[0] - 1, position[y] - 1)
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7:
+            if board.board_state[x][y] == None:
+                possible_moves.append((x, y))
 
         return possible_moves
     
@@ -55,50 +63,50 @@ class King(Piece):
 
         x = (position[0] + 1)
         y = position[0]
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = (position[0] - 1)
         y = position[1]
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = position[0]
         y = (position[1] + 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = position[0]
         y = (position[1] - 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = (position[0] + 1)
         y = (position[1] + 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = (position[0] - 1)
         y = (position[1] + 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
 
         x = (position[0] - 1)
         y = (position[1] - 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
                 
         x = (position[0] + 1)
         y = (position[1] - 1)
-        if y < 0 or y > 7: return possible_attacks
-        if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
-            possible_attacks.append((x,y))
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7: 
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
         
         return possible_attacks

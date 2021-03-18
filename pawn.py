@@ -14,13 +14,13 @@ class Pawn(Piece):
 
         if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
 
-        possible_moves.append((position[0] + self.direction, position[1]))
+        possible_moves.append((x, y))
         # se o peao ainda n se moveu, ele pode andar duas casas
         if not self.moved:
             x = position[0] + 2*self.direction
             if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
 
-            possible_moves.append((position[0] + 2 * self.direction, position[1]))
+            possible_moves.append((x, y))
         
         return possible_moves
     
