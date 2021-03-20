@@ -3,13 +3,13 @@ from piece import *
 class Queen(Piece):
     def __init__(self, color, image_file):
         super().__init__("Rainha", color, image_file)
-    
+        self.directions = [(1,0),(0,1),(1,1),(-1,0),(0,-1),(-1,-1),(1,-1),(-1,1)]
+
     # position eh uma tupla coordenada (linha,coluna)
     def move(self, position, board):
         possible_moves = []
-        directions = [(1,0),(0,1),(1,1),(-1,0),(0,-1),(-1,-1),(1,-1),(-1,1)]
 
-        for direction in directions:
+        for direction in self.directions:
             aux = 1
             x = position[0] + aux*direction[0]
             y = position[1] + aux*direction[1]
@@ -23,9 +23,8 @@ class Queen(Piece):
     
     def attack(self, position, board):
         possible_attacks = []
-        directions = [(1,0),(0,1),(1,1),(-1,0),(0,-1),(-1,-1),(1,-1),(-1,1)]
 
-        for direction in directions:            
+        for direction in self.directions:
             aux = 1
             x = position[0] + aux*direction[0]
             y = position[1] + aux*direction[1]
