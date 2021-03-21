@@ -17,7 +17,7 @@ class PossibleMoves:
             self.__add_move(move)
 
     def __add_move(self, move):
-        move = self.do_move(move)
+        move = self.__do_move(move)
         
         if self.__move_is_inside_board(move):
             board_state = self.board.board_state[move[0]][move[1]]
@@ -25,7 +25,7 @@ class PossibleMoves:
             if self.__can_move(board_state):
                 self.moves.append(move)
         
-    def do_move(self, direction):
+    def __do_move(self, direction):
         return (self.position_x + direction[0], self.position_y + direction[1])
     
     def __move_is_inside_board(self, move):
@@ -61,7 +61,7 @@ class PossibleAttacks:
             self.__add_attack(move)
 
     def __add_attack(self, attack):
-        attack = self.do_attack(attack)
+        attack = self.__do_attack(attack)
         
         if self.__attack_is_inside_board(attack):
             board_state = self.board.board_state[attack[0]][attack[1]]
@@ -70,7 +70,7 @@ class PossibleAttacks:
                 self.attacks.append(attack)
             
         
-    def do_attack(self, direction):
+    def __do_attack(self, direction):
         return (self.position_x + direction[0], self.position_y + direction[1])
     
     
