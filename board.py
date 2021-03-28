@@ -32,8 +32,8 @@ class Board(GameImage):
                         Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png"),
                         Knight(color, "assets/game/Top Down/Pieces/Marble/b_knight.png"),
                         Bishop(color, "assets/game/Top Down/Pieces/Marble/b_bishop.png"),
-                        King(color, "assets/game/Top Down/Pieces/Marble/b_king.png"),
                         Queen(color, "assets/game/Top Down/Pieces/Marble/b_queen.png"),
+                        King(color, "assets/game/Top Down/Pieces/Marble/b_king.png"),
                         Bishop(color, "assets/game/Top Down/Pieces/Marble/b_bishop.png"),
                         Knight(color, "assets/game/Top Down/Pieces/Marble/b_knight.png"),
                         Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png")
@@ -56,6 +56,9 @@ class Board(GameImage):
                 self.board_state.append(empty_line())
             self.board_state.append(front_line("W", -1))
             self.board_state.append(back_line("W"))
+
+            kings_positions = [(7, 3), (0, 4)]
+            return kings_positions
         else:
             self.board_state.append(back_line("W"))
             self.board_state.append(front_line("W", 1))
@@ -63,7 +66,20 @@ class Board(GameImage):
                 self.board_state.append(empty_line())
             self.board_state.append(front_line("B", -1))
             self.board_state.append(back_line("B"))
-    
+
+            kings_positions = [(0, 4), (7, 3)]
+            return kings_positions
+
+    def get_all_pieces_from_color(self, color):
+        pieces_position = []
+
+        for i in range(8):
+            for j in range(8):
+                if self.board_state[i][j] != None and self.board_state[i][j].color == color:
+                    pieces_position.append((i, j))
+        
+        return pieces_position
+
     def index_to_position(self, index):
         # cada coluna são 64 pixels
         # cada linha são 64 pixels
