@@ -194,7 +194,17 @@ class Gameplay():
                 if self.color_on_play == "W": self.color_on_play = "B"
                 else: self.color_on_play = "W"
             elif self.checkmate:
+                message = GameImage("assets/game/checkmate.png")
+                message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
+                message.draw()
+                self.janela.update()
+                self.janela.delay(2000)
                 return
             elif self.stalemate:
+                message = GameImage("assets/game/stalemate.png")
+                message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
+                message.draw()
+                self.janela.update()
+                self.janela.delay(2000)
                 return
             self.janela.update()
