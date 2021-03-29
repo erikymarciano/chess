@@ -17,7 +17,6 @@ class Gameplay():
         self.checkmate = False
         self.stalemate = False # empate
 
-        print(self.white_king_location, self.black_king_location)
 
     def get_valid_moves(self):
         moves = self.get_all_possible_moves(self.color_on_play, self.board)
@@ -57,7 +56,6 @@ class Gameplay():
                 # in check?
                 if self.in_check(temp_board, temp_king_location):
                     moves[i][1]["move"].remove(moves[i][1]["move"][j])
-                    #print(self.board.board_state[piece_position[0]][piece_position[1]].name, piece_move)
             
             
             for j in range(len(moves[i][1]["attack"])-1, -1, -1):
@@ -80,20 +78,17 @@ class Gameplay():
                 # in check?
                 if self.in_check(temp_board, temp_king_location):
                     moves[i][1]["attack"].remove(moves[i][1]["attack"][j])
-                    #print(self.board.board_state[piece_position[0]][piece_position[1]].name, piece_attack)
             
-            if len(moves[i][1]["move"]) == 0 and len(moves[i][1]["attack"]) == 0:
+            if len(moves[i][1]["move"]) == 0 and len(moves[i][1]["attack"]) == 0: # a peca n pode se mover e nem atacar
                 moves.remove(moves[i])
         
-        print("Moves: ", moves)
         if len(moves) == 0:
-            print("LEN = 0")
             if self.in_check(self.board):
                 self.checkmate = True
                 print("############# Checkmate ############")
             else:
                 self.stalemate = True
-                print("Stalemate")
+                print("############# Stalemate ############")
 
         return moves
 
@@ -114,10 +109,7 @@ class Gameplay():
             else:
                 return self.square_under_attack(self.black_king_location, temp_board)
         else:
-            if self.color_on_play == "W":
-                return self.square_under_attack(king_location, temp_board)
-            else:
-                return self.square_under_attack(king_location, temp_board)
+            return self.square_under_attack(king_location, temp_board)
 
     def square_under_attack(self, position, temp_board):
         if self.color_on_play == "W":
@@ -146,6 +138,8 @@ class Gameplay():
             #possible_actions = piece.on_choose(piece_index, self.board)
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
 
+            if len(valid_moves) == 0: return False
+
             possible_actions = None
 
             for piece_actions in valid_moves:
@@ -153,7 +147,6 @@ class Gameplay():
                     possible_actions = piece_actions[1]
                     break
 
-            print(possible_actions)
             for move_index in possible_actions["move"]:
                 marker = GameImage("assets/game/Top Down/move_marker.png")
                 
@@ -200,4 +193,8 @@ class Gameplay():
             if self.player_turn():
                 if self.color_on_play == "W": self.color_on_play = "B"
                 else: self.color_on_play = "W"
+            elif self.checkmate:
+                return
+            elif self.stalemate:
+                return
             self.janela.update()

@@ -57,7 +57,7 @@ class Board(GameImage):
             self.board_state.append(front_line("W", -1))
             self.board_state.append(back_line("W"))
 
-            kings_positions = [(7, 3), (0, 4)]
+            kings_positions = [(7, 4), (0, 4)]
             return kings_positions
         else:
             self.board_state.append(back_line("W"))
@@ -67,7 +67,7 @@ class Board(GameImage):
             self.board_state.append(front_line("B", -1))
             self.board_state.append(back_line("B"))
 
-            kings_positions = [(0, 4), (7, 3)]
+            kings_positions = [(0, 4), (7, 4)]
             return kings_positions
 
     def get_all_pieces_from_color(self, color):
