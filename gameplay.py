@@ -1,4 +1,5 @@
 from board import *
+from PPlay.sound import *
 
 class Gameplay():
     def __init__(self, choosen_color, janela, mouse):
@@ -6,6 +7,8 @@ class Gameplay():
         self.janela.set_background_color((0,0,0))
         self.mouse = mouse
         self.player1_color = choosen_color
+
+        self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
 
         self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
@@ -146,6 +149,8 @@ class Gameplay():
                 if piece_actions[0] == piece_index:
                     possible_actions = piece_actions[1]
                     break
+            
+            if possible_actions == None: return False
 
             for move_index in possible_actions["move"]:
                 marker = GameImage("assets/game/Top Down/move_marker.png")
@@ -182,6 +187,7 @@ class Gameplay():
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
+                        self.sound_effect.play()
                         return True # o jogador realizou uma jogada
                     else:
                         self.board.draw_board_state()
