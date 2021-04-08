@@ -1,5 +1,5 @@
 from board import *
-from PPlay.sound import *
+# from PPlay.sound import *
 
 class Gameplay():
     def __init__(self, choosen_color, janela, mouse):
@@ -8,7 +8,7 @@ class Gameplay():
         self.mouse = mouse
         self.player1_color = choosen_color
 
-        self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
+        # self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
 
         self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
@@ -20,20 +20,23 @@ class Gameplay():
         self.checkmate = False
         self.stalemate = False # empate
 
+    
+
+    def copy_board_state(self):
+        temp_board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
+        temp_board.board_state = []
+
+        for i in range(8):
+            line = []
+            for j in range(8):
+                line.append(self.board.board_state[i][j])
+            temp_board.board_state.append(line)
+        return temp_board
+
 
     def get_valid_moves(self):
         moves = self.get_all_possible_moves(self.color_on_play, self.board)
-        temp_board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         temp_king_position = None
-
-        def copy_board_state():
-            temp_board.board_state = []
-
-            for i in range(8):
-                line = []
-                for j in range(8):
-                    line.append(self.board.board_state[i][j])
-                temp_board.board_state.append(line)
             
 
         for i in range(len(moves)-1, -1, -1): # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
@@ -42,7 +45,7 @@ class Gameplay():
             for j in range(len(moves[i][1]["move"])-1, -1, -1):
                 piece_move = moves[i][1]["move"][j]
 
-                copy_board_state()
+                temp_board = self.copy_board_state()
 
                 piece = temp_board.board_state[piece_position[0]][piece_position[1]]
 
@@ -60,11 +63,10 @@ class Gameplay():
                 if self.in_check(temp_board, temp_king_location):
                     moves[i][1]["move"].remove(moves[i][1]["move"][j])
             
-            
             for j in range(len(moves[i][1]["attack"])-1, -1, -1):
                 piece_attack = moves[i][1]["attack"][j]
 
-                copy_board_state()
+                temp_board = self.copy_board_state()
 
                 piece = temp_board.board_state[piece_position[0]][piece_position[1]]
 
@@ -140,6 +142,27 @@ class Gameplay():
         if self.mouse.is_button_pressed(1) and self.color_on_play == piece.color:
             #possible_actions = piece.on_choose(piece_index, self.board)
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
+            rival_color = 'W' if self.color_on_play == 'B' else 'B'
+
+            if piece.name == 'Rei':
+                if not (piece.moved and in_check(self.board)) :
+                    has_piece_until_tower = False
+                    temporary_board = self.copy_board_state()
+
+                    for i in range(piece_index[1] + 1 , 1, 7):
+                        state = self.board.board_state[piece_index[0]][i]
+                        temporary_board.board_state[piece_index[0]][i] = piece
+                        if state != None or square_under_attack((piece_index[0],i), temporary_board):
+                            has_piece_until_tower = True
+                            break
+
+                    if not has_piece_until_tower:
+                        tower = self.board.board_state[piece_index[0]][piece_index[1] + 3]
+                        if not tower.moved:
+                            print("roque")
+                            print()
+                            print((piece_index[0], piece_index[1] + 3))
+                            valid_moves.append((piece_index[0], piece_index[1] + 3))
 
             if len(valid_moves) == 0: return False
 
@@ -187,7 +210,7 @@ class Gameplay():
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
-                        self.sound_effect.play()
+                        # self.sound_effect.play()
                         return True # o jogador realizou uma jogada
                     else:
                         self.board.draw_board_state()
