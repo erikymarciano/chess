@@ -20,7 +20,13 @@ class Gameplay():
         self.checkmate = False
         self.stalemate = False # empate
 
-    
+    def destiny_special_move(self, possible_actions, index ):
+
+        if 'special_move' not in possible_actions: return False
+        special_moves = possible_actions['special_move']
+
+        if index == special_moves[0]['destiny']: return True
+        return False
 
     def copy_board_state(self):
         temp_board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
@@ -143,26 +149,29 @@ class Gameplay():
             #possible_actions = piece.on_choose(piece_index, self.board)
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
             rival_color = 'W' if self.color_on_play == 'B' else 'B'
+            special_move = {}
 
             if piece.name == 'Rei':
-                if not (piece.moved and in_check(self.board)) :
+                if not (piece.moved and self.in_check(self.board)) :
                     has_piece_until_tower = False
                     temporary_board = self.copy_board_state()
 
                     for i in range(piece_index[1] + 1 , 1, 7):
                         state = self.board.board_state[piece_index[0]][i]
                         temporary_board.board_state[piece_index[0]][i] = piece
-                        if state != None or square_under_attack((piece_index[0],i), temporary_board):
+                        if (state != None) or self.square_under_attack((piece_index[0],i), temporary_board):
                             has_piece_until_tower = True
                             break
 
                     if not has_piece_until_tower:
                         tower = self.board.board_state[piece_index[0]][piece_index[1] + 3]
                         if not tower.moved:
-                            print("roque")
-                            print()
-                            print((piece_index[0], piece_index[1] + 3))
-                            valid_moves.append((piece_index[0], piece_index[1] + 3))
+                            king_position_on_valid_moves = [i for i in range(len(valid_moves)) if valid_moves[i][0] == (6, 1)]
+
+                            special_move = { 'special_move': [ 
+                                {'origin': piece_index, 'destiny': (piece_index[0], piece_index[1] + 2), 'piece': piece },
+                                {'origin': (7,7),       'destiny': (piece_index[0], piece_index[1] + 1), 'piece': self.board.board_state[7][7] }
+                            ] }
 
             if len(valid_moves) == 0: return False
 
@@ -172,8 +181,18 @@ class Gameplay():
                 if piece_actions[0] == piece_index:
                     possible_actions = piece_actions[1]
                     break
-            
             if possible_actions == None: return False
+            
+            temp_possible_actions = possible_actions
+            possible_actions = { **temp_possible_actions, **special_move}
+   
+            if "special_move" in possible_actions:
+                special_move = possible_actions["special_move"]
+                marker = GameImage("assets/game/Top Down/move_marker.png")
+                position = self.board.index_to_position(special_move[0]['destiny'])
+                marker.set_position(position[0], position[1])
+                marker.draw()
+
 
             for move_index in possible_actions["move"]:
                 marker = GameImage("assets/game/Top Down/move_marker.png")
@@ -212,10 +231,22 @@ class Gameplay():
                         self.board.draw_board_state()
                         # self.sound_effect.play()
                         return True # o jogador realizou uma jogada
+
+                    if self.destiny_special_move(possible_actions, index):
+                        special_move = possible_actions['special_move']
+
+                        for move in special_move:
+                            self.board.board_state[move['origin'][0]][move['origin'][1]] = None
+                            self.board.board_state[move['destiny'][0]][move['destiny'][1]] = move['piece']
+                            move["piece"].moved = True
+                    
+                            self.janela.set_background_color((0,0,0))
+                            self.board.draw_board_state()
+                        return True
+
                     else:
                         self.board.draw_board_state()
                         return False # o jogador clicou em um local invalido
-                
 
     def loop(self):
         while True:
