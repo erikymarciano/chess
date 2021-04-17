@@ -40,6 +40,52 @@ class Gameplay():
         return temp_board
 
 
+    def check_tower_until_king(self, piece, piece_index):
+        temporary_board = self.copy_board_state()
+        tower_location = 0
+        for i in range( tower_location + 1, piece_index[1] , 1):
+            state = self.board.board_state[piece_index[0]][i]
+            temporary_board.board_state[piece_index[0]][i-1] = None
+            temporary_board.board_state[piece_index[0]][i] = piece
+            if state != None or self.square_under_attack((piece_index[0], i), temporary_board):
+                return False
+    
+        tower = self.board.board_state[piece_index[0]][tower_location]
+        if tower.__class__ is not Tower: return False
+        if not tower.moved:
+            king_column = piece_index[1] - 2
+            
+            return [
+                   {'origin': piece_index, 'destiny': (piece_index[0], king_column), 'piece': piece },
+                   {'origin': (piece_index[0], tower_location), 'destiny': (piece_index[0], king_column + 1), 'piece': tower }
+                   ]
+        return False
+
+
+    def check_king_until_tower(self, piece, piece_index):
+      temporary_board = self.copy_board_state()
+        
+      tower_location = 7
+
+      for i in range( piece_index[1]+1 ,tower_location, 1):
+        state = self.board.board_state[piece_index[0]][i]
+        temporary_board.board_state[piece_index[0]][i-1] = None
+        temporary_board.board_state[piece_index[0]][i] = piece
+        if state != None or self.square_under_attack((piece_index[0], i), temporary_board):
+            return False
+        
+      tower = self.board.board_state[piece_index[0]][tower_location]
+      if tower.__class__ is not Tower: return False
+      if not tower.moved:
+        king_column = piece_index[1] + 2
+            
+        return [
+            {'origin': piece_index, 'destiny': (piece_index[0], king_column), 'piece': piece },
+            {'origin': (piece_index[0], tower_location), 'destiny': (piece_index[0], king_column - 1), 'piece': tower }
+        ]
+      return False
+
+        
     def get_valid_moves(self):
         moves = self.get_all_possible_moves(self.color_on_play, self.board)
         temp_king_position = None
@@ -148,31 +194,22 @@ class Gameplay():
         if self.mouse.is_button_pressed(1) and self.color_on_play == piece.color:
             #possible_actions = piece.on_choose(piece_index, self.board)
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
-            rival_color = 'W' if self.color_on_play == 'B' else 'B'
             special_move = {}
-
             if piece.name == 'Rei':
                 if not (piece.moved and self.in_check(self.board)) :
-                    has_piece_until_tower = False
-                    temporary_board = self.copy_board_state()
 
-                    for i in range(piece_index[1] + 1 , 1, 7):
-                        state = self.board.board_state[piece_index[0]][i]
-                        temporary_board.board_state[piece_index[0]][i] = piece
-                        if (state != None) or self.square_under_attack((piece_index[0],i), temporary_board):
-                            has_piece_until_tower = True
-                            break
+                    left_roque  = self.check_tower_until_king(piece, piece_index)
+                    right_roque = self.check_king_until_tower(piece, piece_index)
+       
 
-                    if not has_piece_until_tower:
-                        tower = self.board.board_state[piece_index[0]][piece_index[1] + 3]
-                        if not tower.moved:
-                            king_position_on_valid_moves = [i for i in range(len(valid_moves)) if valid_moves[i][0] == (6, 1)]
-
-                            special_move = { 'special_move': [ 
-                                {'origin': piece_index, 'destiny': (piece_index[0], piece_index[1] + 2), 'piece': piece },
-                                {'origin': (7,7),       'destiny': (piece_index[0], piece_index[1] + 1), 'piece': self.board.board_state[7][7] }
-                            ] }
-
+                    if right_roque == False and left_roque == False:
+                        special_move = {}
+                    elif right_roque == False:
+                        special_move = { 'special_move': left_roque}
+                    elif left_roque == False:
+                        special_move = { 'special_move': right_roque }
+                    else:
+                        special_move = { 'special_move':  left_roque.append(right_roque[0]) }
             if len(valid_moves) == 0: return False
 
             possible_actions = None
@@ -187,11 +224,12 @@ class Gameplay():
             possible_actions = { **temp_possible_actions, **special_move}
    
             if "special_move" in possible_actions:
-                special_move = possible_actions["special_move"]
-                marker = GameImage("assets/game/Top Down/move_marker.png")
-                position = self.board.index_to_position(special_move[0]['destiny'])
-                marker.set_position(position[0], position[1])
-                marker.draw()
+                if len(possible_actions["special_move"]) != 0:
+                    for move in possible_actions['special_move']: 
+                        marker = GameImage("assets/game/Top Down/move_marker.png")
+                        position = self.board.index_to_position(move['destiny'])
+                        marker.set_position(position[0], position[1])
+                        marker.draw()
 
 
             for move_index in possible_actions["move"]:
