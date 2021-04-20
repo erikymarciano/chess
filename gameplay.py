@@ -85,6 +85,40 @@ class Gameplay():
         ]
       return False
 
+    def promote(self):
+        knight, bishop, queen, tower = [None for i in range(4)]
+        if self.color_on_play == "W":
+            knight = Knight(color, "assets/game/Top Down/Pieces/Marble/w_knight.png")
+            bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/w_bishop.png")
+            queen = Queen(color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
+            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/w_tower.png")
+        else:
+            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png"),
+            knight = Knight(color, "assets/game/Top Down/Pieces/Marble/b_knight.png")
+            bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/b_bishop.png")
+            queen = Queen(color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+        
+        knight.set_position(self.board.x + self.board.width + 10, 0)
+        bishop.set_position(self.board.x + self.board.width + 10, knight.height)
+        queen.set_position(self.board.x + self.board.width + 10, 2*knight.height)
+        tower.set_position(self.board.x + self.board.width + 10, 3*knight.height)
+
+        knight.draw()
+        bishop.draw()
+        queen.draw()
+        tower.draw()
+
+        while True:
+            self.janela.update()
+            if self.mouse.is_button_pressed(1):
+                if self.mouse.is_over_object(knight):
+                    return knight
+                if self.mouse.is_over_object(bishop):
+                    return bishop
+                if self.mouse.is_over_object(queen):
+                    return queen
+                if self.mouse.is_over_object(tower):
+                    return tower
         
     def get_valid_moves(self):
         moves = self.get_all_possible_moves(self.color_on_play, self.board)
@@ -264,6 +298,11 @@ class Gameplay():
                         if piece.name == "Rei":
                             if piece.color == "W": self.white_king_location = index
                             else: self.black_king_location = index
+
+                        # peão está na ultima casa
+                        if piece.name == "Peão" and (index[0] == 0 or index[0] == 7):
+                            self.board.board_state[index[0]][index[1]] = None
+                            self.board.board_state[index[0]][index[1]] = self.promote()
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
