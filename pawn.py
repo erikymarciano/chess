@@ -12,13 +12,13 @@ class Pawn(Piece):
         x = position[0] + self.direction
         y = position[1]
 
-        if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
+        if 0 <= x <= 7 and 0 <= y <= 7 and board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
 
         possible_moves.append((x, y))
         # se o peao ainda n se moveu, ele pode andar duas casas
         if not self.moved:
             x = position[0] + 2*self.direction
-            if board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
+            if 0 <= x <= 7 and 0 <= y <= 7 and  board.board_state[x][y] != None: return possible_moves # tem uma peca no caminho
 
             possible_moves.append((x, y))
         
