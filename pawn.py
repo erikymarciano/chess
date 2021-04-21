@@ -3,12 +3,13 @@ from piece import *
 class Pawn(Piece):
     def __init__(self, color, image_file, direction):
         self.direction = direction # direcao na qual o peao se move
+        self.en_passant = False
         super().__init__("Peão", color, image_file)
     
     # position eh uma tupla coordenada (linha,coluna)
     def move(self, position, board):
         possible_moves = []
-        
+
         x = position[0] + self.direction
         y = position[1]
 
@@ -36,6 +37,18 @@ class Pawn(Piece):
         y = position[1] - 1
         if 0 <= x <= 7 and 0 <= y <= 7:
             if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
+                possible_attacks.append((x,y))
+
+        x = position[0]
+        y = position[1] + 1
+        if 0 <= x <= 7 and 0 <= y <= 7:
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color and board.board_state[x][y].name == "Peão" and board.board_state[x][y].en_passant):
+                possible_attacks.append((x,y))
+
+        x = position[0]
+        y = position[1] - 1
+        if 0 <= x <= 7 and 0 <= y <= 7:
+            if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color and board.board_state[x][y].name == "Peão" and board.board_state[x][y].en_passant):
                 possible_attacks.append((x,y))
 
         return possible_attacks

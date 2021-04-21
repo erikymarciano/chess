@@ -80,6 +80,16 @@ class Board(GameImage):
         
         return pieces_position
 
+    def get_all_pieces_from_name(self, name):
+        pieces_position = []
+
+        for i in range(8):
+            for j in range(8):
+                if self.board_state[i][j] != None and self.board_state[i][j].name == name:
+                    pieces_position.append((i, j))
+
+        return pieces_position
+
     def index_to_position(self, index):
         # cada coluna são 64 pixels
         # cada linha são 64 pixels
