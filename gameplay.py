@@ -87,37 +87,50 @@ class Gameplay():
 
     def promote(self):
         knight, bishop, queen, tower = [None for i in range(4)]
+        color = self.color_on_play
+
         if self.color_on_play == "W":
             knight = Knight(color, "assets/game/Top Down/Pieces/Marble/w_knight.png")
             bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/w_bishop.png")
             queen = Queen(color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
             tower = Tower(color, "assets/game/Top Down/Pieces/Marble/w_tower.png")
         else:
-            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png"),
             knight = Knight(color, "assets/game/Top Down/Pieces/Marble/b_knight.png")
             bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/b_bishop.png")
             queen = Queen(color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png")
         
-        knight.set_position(self.board.x + self.board.width + 10, 0)
-        bishop.set_position(self.board.x + self.board.width + 10, knight.height)
-        queen.set_position(self.board.x + self.board.width + 10, 2*knight.height)
-        tower.set_position(self.board.x + self.board.width + 10, 3*knight.height)
+        label = GameImage("assets/game/pawn_promotion.png")
+        
+        if self.player1_color == self.color_on_play:
+            label.set_position(self.board.x + self.board.width + 10, self.janela.height - (2*knight.height + label.height + 10))
+            knight.set_position(self.board.x + self.board.width + 10, self.janela.height - (knight.height + 10))
+            bishop.set_position(self.board.x + self.board.width + knight.width + 10, self.janela.height - (knight.height + 10))
+            queen.set_position(self.board.x + self.board.width + 10, self.janela.height - (2*knight.height + 10))
+            tower.set_position(self.board.x + self.board.width + knight.width + 10, self.janela.height - (2*knight.height + 10))
+        else:
+            label.set_position(self.board.x - (2*knight.width + 10), 10)
+            knight.set_position(self.board.x - (2*knight.width + 10), label.height + 10)
+            bishop.set_position(self.board.x - (knight.width + 10), label.height + 10)
+            queen.set_position(self.board.x - (knight.width + 10), label.height + knight.height + 10)
+            tower.set_position(self.board.x - (2*knight.width + 10), label.height + knight.height + 10)
 
         knight.draw()
         bishop.draw()
         queen.draw()
         tower.draw()
+        label.draw()
 
         while True:
             self.janela.update()
             if self.mouse.is_button_pressed(1):
                 if self.mouse.is_over_object(knight):
                     return knight
-                if self.mouse.is_over_object(bishop):
+                elif self.mouse.is_over_object(bishop):
                     return bishop
-                if self.mouse.is_over_object(queen):
+                elif self.mouse.is_over_object(queen):
                     return queen
-                if self.mouse.is_over_object(tower):
+                elif self.mouse.is_over_object(tower):
                     return tower
         
     def get_valid_moves(self):
@@ -230,7 +243,7 @@ class Gameplay():
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
             special_move = {}
             if piece.name == 'Rei':
-                if not (piece.moved and self.in_check(self.board)) :
+                if not (piece.moved and self.in_check(self.board)):
 
                     left_roque  = self.check_tower_until_king(piece, piece_index)
                     right_roque = self.check_king_until_tower(piece, piece_index)
@@ -243,7 +256,7 @@ class Gameplay():
                     elif left_roque == False:
                         special_move = { 'special_move': right_roque }
                     else:
-                        special_move = { 'special_move':  left_roque.append(right_roque[0]) }
+                        special_move = { 'special_move': left_roque.append(right_roque[0]) }
             if len(valid_moves) == 0: return False
 
             possible_actions = None
@@ -260,7 +273,7 @@ class Gameplay():
             if "special_move" in possible_actions:
                 if len(possible_actions["special_move"]) != 0:
                     for move in possible_actions['special_move']: 
-                        marker = GameImage("assets/game/Top Down/move_marker.png")
+                        marker = GameImage("assets/game/Top Down/special_move_marker.png")
                         position = self.board.index_to_position(move['destiny'])
                         marker.set_position(position[0], position[1])
                         marker.draw()
@@ -300,9 +313,17 @@ class Gameplay():
                             else: self.black_king_location = index
 
                         # peão está na ultima casa
+                        
                         if piece.name == "Peão" and (index[0] == 0 or index[0] == 7):
-                            self.board.board_state[index[0]][index[1]] = None
-                            self.board.board_state[index[0]][index[1]] = self.promote()
+                            #self.board.board_state[index[0]][index[1]] = None
+                            self.janela.set_background_color((0,0,0))
+                            self.board.draw_board_state()
+
+                            piece = self.promote()
+
+                            self.board.board_state[index[0]][index[1]] = piece
+
+                            self.janela.update()
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
@@ -316,7 +337,7 @@ class Gameplay():
                             self.board.board_state[move['origin'][0]][move['origin'][1]] = None
                             self.board.board_state[move['destiny'][0]][move['destiny'][1]] = move['piece']
                             move["piece"].moved = True
-                    
+
                             self.janela.set_background_color((0,0,0))
                             self.board.draw_board_state()
                         return True
