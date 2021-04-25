@@ -1,5 +1,5 @@
 from board import *
-from PPlay.sound import *
+# from PPlay.sound import *
 
 class Gameplay():
     def __init__(self, choosen_color, janela, mouse):
@@ -8,7 +8,7 @@ class Gameplay():
         self.mouse = mouse
         self.player1_color = choosen_color
 
-        self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
+        # self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
 
         self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
@@ -20,20 +20,122 @@ class Gameplay():
         self.checkmate = False
         self.stalemate = False # empate
 
+    def destiny_special_move(self, possible_actions, index ):
 
+        if 'special_move' not in possible_actions: return False
+        special_moves = possible_actions['special_move']
+
+        if index == special_moves[0]['destiny']: return True
+        return False
+
+    def copy_board_state(self):
+        temp_board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
+        temp_board.board_state = []
+
+        for i in range(8):
+            line = []
+            for j in range(8):
+                line.append(self.board.board_state[i][j])
+            temp_board.board_state.append(line)
+        return temp_board
+
+
+    def check_tower_until_king(self, piece, piece_index):
+        temporary_board = self.copy_board_state()
+        tower_location = 0
+        for i in range( tower_location + 1, piece_index[1] , 1):
+            state = self.board.board_state[piece_index[0]][i]
+            temporary_board.board_state[piece_index[0]][i-1] = None
+            temporary_board.board_state[piece_index[0]][i] = piece
+            if state != None or self.square_under_attack((piece_index[0], i), temporary_board):
+                return False
+    
+        tower = self.board.board_state[piece_index[0]][tower_location]
+        if tower.__class__ is not Tower: return False
+        if not tower.moved:
+            king_column = piece_index[1] - 2
+            
+            return [
+                   {'origin': piece_index, 'destiny': (piece_index[0], king_column), 'piece': piece },
+                   {'origin': (piece_index[0], tower_location), 'destiny': (piece_index[0], king_column + 1), 'piece': tower }
+                   ]
+        return False
+
+
+    def check_king_until_tower(self, piece, piece_index):
+      temporary_board = self.copy_board_state()
+        
+      tower_location = 7
+
+      for i in range( piece_index[1]+1 ,tower_location, 1):
+        state = self.board.board_state[piece_index[0]][i]
+        temporary_board.board_state[piece_index[0]][i-1] = None
+        temporary_board.board_state[piece_index[0]][i] = piece
+        if state != None or self.square_under_attack((piece_index[0], i), temporary_board):
+            return False
+        
+      tower = self.board.board_state[piece_index[0]][tower_location]
+      if tower.__class__ is not Tower: return False
+      if not tower.moved:
+        king_column = piece_index[1] + 2
+            
+        return [
+            {'origin': piece_index, 'destiny': (piece_index[0], king_column), 'piece': piece },
+            {'origin': (piece_index[0], tower_location), 'destiny': (piece_index[0], king_column - 1), 'piece': tower }
+        ]
+      return False
+
+    def promote(self):
+        knight, bishop, queen, tower = [None for i in range(4)]
+        color = self.color_on_play
+
+        if self.color_on_play == "W":
+            knight = Knight(color, "assets/game/Top Down/Pieces/Marble/w_knight.png")
+            bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/w_bishop.png")
+            queen = Queen(color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
+            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/w_tower.png")
+        else:
+            knight = Knight(color, "assets/game/Top Down/Pieces/Marble/b_knight.png")
+            bishop = Bishop(color, "assets/game/Top Down/Pieces/Marble/b_bishop.png")
+            queen = Queen(color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+            tower = Tower(color, "assets/game/Top Down/Pieces/Marble/b_tower.png")
+        
+        label = GameImage("assets/game/pawn_promotion.png")
+        
+        if self.player1_color == self.color_on_play:
+            label.set_position(self.board.x + self.board.width + 10, self.janela.height - (2*knight.height + label.height + 10))
+            knight.set_position(self.board.x + self.board.width + 10, self.janela.height - (knight.height + 10))
+            bishop.set_position(self.board.x + self.board.width + knight.width + 10, self.janela.height - (knight.height + 10))
+            queen.set_position(self.board.x + self.board.width + 10, self.janela.height - (2*knight.height + 10))
+            tower.set_position(self.board.x + self.board.width + knight.width + 10, self.janela.height - (2*knight.height + 10))
+        else:
+            label.set_position(self.board.x - (2*knight.width + 10), 10)
+            knight.set_position(self.board.x - (2*knight.width + 10), label.height + 10)
+            bishop.set_position(self.board.x - (knight.width + 10), label.height + 10)
+            queen.set_position(self.board.x - (knight.width + 10), label.height + knight.height + 10)
+            tower.set_position(self.board.x - (2*knight.width + 10), label.height + knight.height + 10)
+
+        knight.draw()
+        bishop.draw()
+        queen.draw()
+        tower.draw()
+        label.draw()
+
+        while True:
+            self.janela.update()
+            if self.mouse.is_button_pressed(1):
+                if self.mouse.is_over_object(knight):
+                    return knight
+                elif self.mouse.is_over_object(bishop):
+                    return bishop
+                elif self.mouse.is_over_object(queen):
+                    return queen
+                elif self.mouse.is_over_object(tower):
+                    return tower
+        
     def get_valid_moves(self):
         moves = self.get_all_possible_moves(self.color_on_play, self.board)
-        temp_board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         temp_king_position = None
-
-        def copy_board_state():
-            temp_board.board_state = []
-
-            for i in range(8):
-                line = []
-                for j in range(8):
-                    line.append(self.board.board_state[i][j])
-                temp_board.board_state.append(line)
             
 
         for i in range(len(moves)-1, -1, -1): # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
@@ -42,7 +144,7 @@ class Gameplay():
             for j in range(len(moves[i][1]["move"])-1, -1, -1):
                 piece_move = moves[i][1]["move"][j]
 
-                copy_board_state()
+                temp_board = self.copy_board_state()
 
                 piece = temp_board.board_state[piece_position[0]][piece_position[1]]
 
@@ -60,11 +162,10 @@ class Gameplay():
                 if self.in_check(temp_board, temp_king_location):
                     moves[i][1]["move"].remove(moves[i][1]["move"][j])
             
-            
             for j in range(len(moves[i][1]["attack"])-1, -1, -1):
                 piece_attack = moves[i][1]["attack"][j]
 
-                copy_board_state()
+                temp_board = self.copy_board_state()
 
                 piece = temp_board.board_state[piece_position[0]][piece_position[1]]
 
@@ -140,7 +241,22 @@ class Gameplay():
         if self.mouse.is_button_pressed(1) and self.color_on_play == piece.color:
             #possible_actions = piece.on_choose(piece_index, self.board)
             valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
+            special_move = {}
+            if piece.name == 'Rei':
+                if not (piece.moved and self.in_check(self.board)):
 
+                    left_roque  = self.check_tower_until_king(piece, piece_index)
+                    right_roque = self.check_king_until_tower(piece, piece_index)
+       
+
+                    if right_roque == False and left_roque == False:
+                        special_move = {}
+                    elif right_roque == False:
+                        special_move = { 'special_move': left_roque}
+                    elif left_roque == False:
+                        special_move = { 'special_move': right_roque }
+                    else:
+                        special_move = { 'special_move': left_roque.append(right_roque[0]) }
             if len(valid_moves) == 0: return False
 
             possible_actions = None
@@ -149,8 +265,19 @@ class Gameplay():
                 if piece_actions[0] == piece_index:
                     possible_actions = piece_actions[1]
                     break
-            
             if possible_actions == None: return False
+            
+            temp_possible_actions = possible_actions
+            possible_actions = { **temp_possible_actions, **special_move}
+   
+            if "special_move" in possible_actions:
+                if len(possible_actions["special_move"]) != 0:
+                    for move in possible_actions['special_move']: 
+                        marker = GameImage("assets/game/Top Down/special_move_marker.png")
+                        position = self.board.index_to_position(move['destiny'])
+                        marker.set_position(position[0], position[1])
+                        marker.draw()
+
 
             for move_index in possible_actions["move"]:
                 marker = GameImage("assets/game/Top Down/move_marker.png")
@@ -197,14 +324,39 @@ class Gameplay():
                             if piece.color == "W": self.white_king_location = index
                             else: self.black_king_location = index
 
+                        # peão está na ultima casa
+                        
+                        if piece.name == "Peão" and (index[0] == 0 or index[0] == 7):
+                            #self.board.board_state[index[0]][index[1]] = None
+                            self.janela.set_background_color((0,0,0))
+                            self.board.draw_board_state()
+
+                            piece = self.promote()
+
+                            self.board.board_state[index[0]][index[1]] = piece
+
+                            self.janela.update()
+
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
-                        self.sound_effect.play()
+                        # self.sound_effect.play()
                         return True # o jogador realizou uma jogada
+
+                    if self.destiny_special_move(possible_actions, index):
+                        special_move = possible_actions['special_move']
+
+                        for move in special_move:
+                            self.board.board_state[move['origin'][0]][move['origin'][1]] = None
+                            self.board.board_state[move['destiny'][0]][move['destiny'][1]] = move['piece']
+                            move["piece"].moved = True
+
+                            self.janela.set_background_color((0,0,0))
+                            self.board.draw_board_state()
+                        return True
+
                     else:
                         self.board.draw_board_state()
                         return False # o jogador clicou em um local invalido
-                
 
     def loop(self):
         while True:
