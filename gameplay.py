@@ -339,15 +339,12 @@ class Gameplay():
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
-<<<<<<< HEAD
                         # self.sound_effect.play()
-=======
                         if self.color_on_play == 'W':
                             self.board.clean_all_en_passant('B')
                         else:
                             self.board.clean_all_en_passant('W')
-                        self.sound_effect.play()
->>>>>>> 8957fed469f77bef4136119b63dced0a711aec39
+                        #self.sound_effect.play()
                         return True # o jogador realizou uma jogada
 
                     if self.destiny_special_move(possible_actions, index):
