@@ -1,4 +1,5 @@
 from board import *
+import random
 # from PPlay.sound import *
 
 class Gameplay():
@@ -346,23 +347,159 @@ class Gameplay():
                         self.board.draw_board_state()
                         return False # o jogador clicou em um local invalido
 
-    def loop(self):
+    def ia_turn(self):
+        self.janela.delay(200)
+        valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
+
+        if len(valid_moves) == 0:
+            self.checkmate = True
+            return False
+
+        pieces_weight = {"Rei": 10, "Rainha": 9, "Torre": 5, "Cavalo": 3, "Bispo": 3, "Peão": 1}
+
+        def my_criteria(elem):
+            attacks = elem[1]["attack"]
+
+            best_attack_weight = 0
+
+            for index in attacks:
+                attack_weight = pieces_weight[self.board.board_state[index[0]][index[1]].name]
+
+                if attack_weight > best_attack_weight:
+                    best_attack_weight = attack_weight
+            
+            return best_attack_weight
+
+        sorted_attacks = sorted(valid_moves, reverse=True, key=my_criteria)
+        if len(sorted_attacks[0][1]["attack"]) > 0:
+            piece_index = sorted_attacks[0][0]
+        
+            attacks = sorted_attacks[0][1]["attack"]
+            best_attack_weight = 0
+            best_attack = None
+            for i in range(len(attacks)):
+                attack_weight = pieces_weight[self.board.board_state[attacks[i][0]][attacks[i][1]].name]
+
+                if attack_weight > best_attack_weight:
+                    best_attack_weight = attack_weight
+                    best_attack = attacks[i]
+
+            piece = self.board.board_state[piece_index[0]][piece_index[1]]
+
+            self.board.board_state[piece_index[0]][piece_index[1]] = None
+
+            if piece.name == "Peão" and (best_attack[0] == 0 or best_attack[0] == 7): # promocao do peao
+                if piece.color == "W":
+                    piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
+                else:
+                    piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+
+            self.board.board_state[best_attack[0]][best_attack[1]] = piece
+            piece.moved = True
+
+            self.janela.set_background_color((0,0,0))
+            self.board.draw_board_state()
+            
+            return True
+
+        random_piece = random.choice(valid_moves)
+        random_move = random.choice(random_piece[1]["move"])
+
+        piece = self.board.board_state[random_piece[0][0]][random_piece[0][1]]
+        
+        self.board.board_state[random_piece[0][0]][random_piece[0][1]] = None
+
+        if piece.name == "Peão" and (random_move[0] == 0 or random_move[0] == 7): # promocao do peao
+            if piece.color == "W":
+                piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
+            else:
+                piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+        
+        self.board.board_state[random_move[0]][random_move[1]] = piece
+        
+
+        piece.moved = True
+
+        self.janela.set_background_color((0,0,0))
+        self.board.draw_board_state()
+
+        return True
+
+    def end_game(self):
+        if self.checkmate:
+            message = GameImage("assets/game/checkmate.png")
+            message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
+            message.draw()
+            self.janela.update()
+            self.janela.delay(2000)
+            return True
+        elif self.stalemate:
+            message = GameImage("assets/game/stalemate.png")
+            message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
+            message.draw()
+            self.janela.update()
+            self.janela.delay(2000)
+            return True
+        
+        return False
+
+    def loop(self, game_mode):
+        if game_mode == 0:
+            self.player_vs_player()
+        elif game_mode == 1:
+            self.player_vs_ia()
+        else:
+            self.ia_vs_ia()
+
+    def player_vs_player(self):
         while True:
-            if self.player_turn():
+            if self.end_game():
+                return
+            
+            elif self.player_turn():
                 if self.color_on_play == "W": self.color_on_play = "B"
                 else: self.color_on_play = "W"
-            elif self.checkmate:
-                message = GameImage("assets/game/checkmate.png")
-                message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
-                message.draw()
-                self.janela.update()
-                self.janela.delay(2000)
+                
+                self.get_valid_moves()
+            
+            self.janela.update()
+    
+    def player_vs_ia(self):
+        player_on_turn = None
+        
+        if self.player1_color == "W": player_on_turn = True
+        else: player_on_turn = False
+
+        while True:
+            if self.end_game():
                 return
-            elif self.stalemate:
-                message = GameImage("assets/game/stalemate.png")
-                message.set_position(self.janela.width/2 - message.width/2, self.janela.height/2 - message.height/2)
-                message.draw()
-                self.janela.update()
-                self.janela.delay(2000)
+            elif player_on_turn:
+                if self.player_turn():
+                    if self.color_on_play == "W": self.color_on_play = "B"
+                    else: self.color_on_play = "W"
+
+                    player_on_turn = False
+                    
+                    self.get_valid_moves()
+            else:
+                if self.ia_turn():
+                    if self.color_on_play == "W": self.color_on_play = "B"
+                    else: self.color_on_play = "W"
+                
+                    player_on_turn = True
+
+                    self.get_valid_moves()
+            
+            self.janela.update()
+
+    def ia_vs_ia(self):
+        while True:
+            if self.end_game():
                 return
+            self.ia_turn()
+            if self.color_on_play == "W": self.color_on_play = "B"
+            else: self.color_on_play = "W"
+
+            self.get_valid_moves()
+            
             self.janela.update()
