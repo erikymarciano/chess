@@ -185,9 +185,9 @@ class Gameplay():
                             en_passant_attack = piece_index[0] == index[0]
                             if index in possible_actions["attack"] and attacked_piece.name == "Peão" and attacked_piece.en_passant and en_passant_attack:
                                 self.board.board_state[index[0]][index[1]] = None
-                                if piece.color == "W":
+                                if piece.color == self.player1_color:
                                     self.board.board_state[index[0] - 1][index[1]] = piece
-                                if piece.color == "B":
+                                else:
                                     self.board.board_state[index[0] + 1][index[1]] = piece
 
                         piece.moved = True # a peca fez pelo menos 1 movimento
@@ -199,6 +199,10 @@ class Gameplay():
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
+                        if self.color_on_play == 'W':
+                            self.board.clean_all_en_passant('B')
+                        else:
+                            self.board.clean_all_en_passant('W')
                         self.sound_effect.play()
                         return True # o jogador realizou uma jogada
                     else:
