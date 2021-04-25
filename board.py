@@ -80,15 +80,20 @@ class Board(GameImage):
         
         return pieces_position
 
-    def get_all_pieces_from_name(self, name):
+    def get_all_pieces_from_name_color(self, name, color):
         pieces_position = []
 
         for i in range(8):
             for j in range(8):
-                if self.board_state[i][j] != None and self.board_state[i][j].name == name:
+                if self.board_state[i][j] != None and self.board_state[i][j].name == name and self.board_state[i][j] != None and self.board_state[i][j].color == color:
                     pieces_position.append((i, j))
-
         return pieces_position
+
+    def clean_all_en_passant(self, color):
+        pawn_positions = self.get_all_pieces_from_name_color('Peão', color)
+        for i in range(len(pawn_positions)):
+            self.board_state[pawn_positions[i][0]][pawn_positions[i][1]].en_passant = False
+        return
 
     def index_to_position(self, index):
         # cada coluna são 64 pixels
