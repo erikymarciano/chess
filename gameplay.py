@@ -348,14 +348,11 @@ class Gameplay():
                         return False # o jogador clicou em um local invalido
 
     def ia_turn(self):
-        self.janela.delay(200)
-        print(self.checkmate)
         valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
-
-        if len(valid_moves) == 0:
-            self.checkmate = True
-            return False
-
+        if len(valid_moves) == 0: return False
+        
+        self.janela.delay(200)
+        
         pieces_weight = {"Rei": 10, "Rainha": 9, "Torre": 5, "Cavalo": 3, "Bispo": 3, "Peão": 1}
 
         def my_criteria(elem):
@@ -387,11 +384,6 @@ class Gameplay():
 
             piece = self.board.board_state[piece_index[0]][piece_index[1]]
 
-            self.board.board_state[piece_index[0]][piece_index[1]] = None
-            
-            self.board.board_state[best_attack[0]][best_attack[1]] = piece
-            piece.moved = True
-
             # atualiza posicao do Rei
             if piece.name == "Rei":
                 if piece.color == "W": 
@@ -399,15 +391,16 @@ class Gameplay():
                 else: 
                     self.black_king_location = best_attack
 
-            print(self.white_king_location)
-            print(self.black_king_location)
-
             if piece.name == "Peão" and (best_attack[0] == 0 or best_attack[0] == 7): # promocao do peao
                 if piece.color == "W":
                     piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
                 else:
                     piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
 
+            self.board.board_state[piece_index[0]][piece_index[1]] = None
+            
+            self.board.board_state[best_attack[0]][best_attack[1]] = piece
+            piece.moved = True
 
             self.janela.set_background_color((0,0,0))
             self.board.draw_board_state()
@@ -420,10 +413,6 @@ class Gameplay():
         piece = self.board.board_state[random_piece[0][0]][random_piece[0][1]]
         
         self.board.board_state[random_piece[0][0]][random_piece[0][1]] = None
-        
-        self.board.board_state[random_move[0]][random_move[1]] = piece       
-
-        piece.moved = True
 
         # atualiza posicao do Rei
         if piece.name == "Rei":
@@ -432,14 +421,14 @@ class Gameplay():
             else: 
                 self.black_king_location = random_move
 
-        print(self.white_king_location)
-        print(self.black_king_location)
-
         if piece.name == "Peão" and (random_move[0] == 0 or random_move[0] == 7): # promocao do peao
             if piece.color == "W":
                 piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/w_queen.png")
             else:
                 piece = Queen(piece.color, "assets/game/Top Down/Pieces/Marble/b_queen.png")
+
+        self.board.board_state[random_move[0]][random_move[1]] = piece       
+        piece.moved = True
 
         self.janela.set_background_color((0,0,0))
         self.board.draw_board_state()
