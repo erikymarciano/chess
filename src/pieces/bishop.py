@@ -1,4 +1,4 @@
-from piece import *
+from .piece import *
 
 class Bishop(Piece):
     def __init__(self, color, image_file, frames = 4):

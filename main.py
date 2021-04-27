@@ -2,8 +2,8 @@ from PPlay.window import *
 from PPlay.gameimage import *
 from PPlay.animation import *
 from PPlay.sound import *
-from manual import *
-from gameplay import *
+from src.manual import *
+from src.gameplay import *
 
 # config tela
 janela = Window(1200, 700)

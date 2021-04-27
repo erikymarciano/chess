@@ -1,10 +1,10 @@
 from PPlay.gameimage import *
-from pawn import *
-from tower import *
-from knight import *
-from bishop import *
-from queen import *
-from king import *
+from .pieces.pawn import *
+from .pieces.tower import *
+from .pieces.knight import *
+from .pieces.bishop import *
+from .pieces.queen import *
+from .pieces.king import *
 
 class Board(GameImage):
     def __init__(self, image_file):

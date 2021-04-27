@@ -1,4 +1,4 @@
-from piece import *
+from .piece import *
 
 class King(Piece):
     def __init__(self, color, image_file, frames = 2):

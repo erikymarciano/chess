@@ -1,4 +1,4 @@
-from board import *
+from .board import *
 # from PPlay.sound import *
 
 class Gameplay():
