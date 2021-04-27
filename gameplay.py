@@ -176,10 +176,10 @@ class Gameplay():
 
                 # atualiza posicao do Rei
                 if piece.name == "Rei":
-                    temp_king_location = piece_move
+                    temp_king_location = piece_attack
                 else:
                     temp_king_location = None
-
+                
                 # in check?
                 if self.in_check(temp_board, temp_king_location):
                     moves[i][1]["attack"].remove(moves[i][1]["attack"][j])
@@ -351,7 +351,7 @@ class Gameplay():
         valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
         if len(valid_moves) == 0: return False
         
-        self.janela.delay(200)
+        #self.janela.delay(50)
         
         pieces_weight = {"Rei": 10, "Rainha": 9, "Torre": 5, "Cavalo": 3, "Bispo": 3, "Peão": 1}
 
