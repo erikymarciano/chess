@@ -9,7 +9,9 @@ class Gameplay():
         self.mouse = mouse
         self.player1_color = choosen_color
 
-        # self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
+    	try:
+            self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
+        except: pass
 
         self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
@@ -328,7 +330,11 @@ class Gameplay():
 
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
-                        # self.sound_effect.play()
+
+                        try:
+                            self.sound_effect.play()
+                        except: pass
+
                         return True # o jogador realizou uma jogada
 
                     if self.destiny_special_move(possible_actions, index):

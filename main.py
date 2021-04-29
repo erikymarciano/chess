@@ -24,10 +24,12 @@ selector_right = Animation("assets/menu/selector.png", 4) # 4 frames
 selector_left = Animation("assets/menu/selector.png", 4) # 4 frames
 
 # soud effects
-soundtrack = Sound("assets/sound/Fantascape.ogg")
-soundtrack.set_repeat(True)
-soundtrack.play()
-sound_effect = Sound("assets/sound/Deep-Metal-Clang-SOUND-Effect.ogg")
+try:
+    soundtrack = Sound("assets/sound/Fantascape.ogg")
+    soundtrack.set_repeat(True)
+    soundtrack.play()
+    sound_effect = Sound("assets/sound/Deep-Metal-Clang-SOUND-Effect.ogg")
+except: pass
 
 def animacao_seletor(botao):
     selector_right.set_total_duration(800)
@@ -131,13 +133,16 @@ while True:
                     
                     janela.update()
             else: choosen_color = "W"
-                
-            soundtrack.stop()
-            sound_effect.play()
-            while fundo_tela.get_curr_frame() < 36:
-                fundo_tela.draw()
-                fundo_tela.update()
-                janela.update()
+            
+            try:
+                soundtrack.stop()
+                sound_effect.play()
+
+                while fundo_tela.get_curr_frame() < 36:
+                    fundo_tela.draw()
+                    fundo_tela.update()
+                    janela.update()
+            except: pass
             
             game = Gameplay(choosen_color, janela, mouse)
             game.loop(game_mode)
