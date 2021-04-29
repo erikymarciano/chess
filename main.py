@@ -17,16 +17,8 @@ fundo_tela.set_total_duration(2000)
 
 # config botoes
 play_button = GameImage("assets/menu/play_button.png")
-play_button.x = janela.width/2 - play_button.width/2
-play_button.y = 2 * play_button.height
-
 manual_button = GameImage("assets/menu/manual_button.png")
-manual_button.x = janela.width/2 - manual_button.width/2
-manual_button.y = 4 * manual_button.height
-
 quit_button = GameImage("assets/menu/quit_button.png")
-quit_button.x = janela.width/2 - quit_button.width/2
-quit_button.y = 6 * quit_button.height
 
 selector_right = Animation("assets/menu/selector.png", 4) # 4 frames
 selector_left = Animation("assets/menu/selector.png", 4) # 4 frames
@@ -54,6 +46,13 @@ def animacao_selecao_peca(animated_button):
     animated_button.draw()
     animated_button.update()
 
+def position_button(button, h):
+    button.set_position(janela.width/2 - play_button.width/2, h * button.height)
+
+position_button(play_button, 2)
+position_button(manual_button, 4)
+position_button(quit_button, 6)
+
 while True:
 
     fundo_tela.draw()
@@ -64,35 +63,74 @@ while True:
     if (mouse.is_over_object(play_button)):
         animacao_seletor(play_button)
         if mouse.is_button_pressed(1):
-            title = GameImage("assets/menu/choose_color.png")
-            title.set_position(janela.width/2 - title.width/2, 0)
+            player_vs_player_button = GameImage("assets/menu/p_vs_p_button.png")
+            player_vs_ia_button = GameImage("assets/menu/p_vs_ia_button.png")
+            ia_vs_ia_button = GameImage("assets/menu/ia_vs_ia_button.png")
 
-            whites = Animation("assets/menu/whites.png", 2)
-            blacks = Animation("assets/menu/blacks.png", 2)
+            position_button(player_vs_player_button, 2)
+            position_button(player_vs_ia_button, 4)
+            position_button(ia_vs_ia_button, 6)
 
-            whites.set_total_duration(500)
-            blacks.set_total_duration(500)
-
-            whites.set_position(100, janela.height/2 - whites.height/2)
-            blacks.set_position(janela.width - 100 - blacks.width, janela.height/2 - blacks.height/2)
-
-            choosen_color = None
-            while choosen_color == None:
+            game_mode = None
+            janela.delay(200)
+            janela.update() # reset mouse button pressed
+            while game_mode == None:
                 fundo_tela.draw()
-                title.draw()
-                whites.draw()
-                blacks.draw()
+                player_vs_player_button.draw()
+                player_vs_ia_button.draw()
+                ia_vs_ia_button.draw()
+
+                if mouse.is_over_object(player_vs_player_button):
+                    animacao_seletor(player_vs_player_button)
+                    if mouse.is_button_pressed(1):
+                        game_mode = 0
                 
-                if mouse.is_over_object(whites):
-                    animacao_selecao_peca(whites)
+                elif mouse.is_over_object(player_vs_ia_button):
+                    animacao_seletor(player_vs_ia_button)
                     if mouse.is_button_pressed(1):
-                        choosen_color = "W"
-                elif mouse.is_over_object(blacks):
-                    animacao_selecao_peca(blacks)
-                    animacao_selecao_peca(blacks)
+                        game_mode = 1
+                
+                elif mouse.is_over_object(ia_vs_ia_button):
+                    animacao_seletor(ia_vs_ia_button)
                     if mouse.is_button_pressed(1):
-                        choosen_color = "B"
+                        game_mode = 2
+
                 janela.update()
+
+            if game_mode != 2:
+                title = GameImage("assets/menu/choose_color.png")
+                title.set_position(janela.width/2 - title.width/2, 0)
+
+                whites = Animation("assets/menu/whites.png", 2)
+                blacks = Animation("assets/menu/blacks.png", 2)
+
+                whites.set_total_duration(500)
+                blacks.set_total_duration(500)
+
+                whites.set_position(100, janela.height/2 - whites.height/2)
+                blacks.set_position(janela.width - 100 - blacks.width, janela.height/2 - blacks.height/2)
+
+                choosen_color = None
+                janela.delay(200)
+                janela.update() # reset mouse button pressed
+                while choosen_color == None:
+                    fundo_tela.draw()
+                    title.draw()
+                    whites.draw()
+                    blacks.draw()
+                    
+                    if mouse.is_over_object(whites):
+                        animacao_selecao_peca(whites)
+                        if mouse.is_button_pressed(1):
+                            choosen_color = "W"
+                    elif mouse.is_over_object(blacks):
+                        animacao_selecao_peca(blacks)
+                        animacao_selecao_peca(blacks)
+                        if mouse.is_button_pressed(1):
+                            choosen_color = "B"
+                    
+                    janela.update()
+            else: choosen_color = "W"
                 
             soundtrack.stop()
             sound_effect.play()
@@ -102,7 +140,7 @@ while True:
                 janela.update()
             
             game = Gameplay(choosen_color, janela, mouse)
-            game.loop()
+            game.loop(game_mode)
 
     elif (mouse.is_over_object(manual_button)):
         animacao_seletor(manual_button)
