@@ -1,6 +1,6 @@
 from board import *
 import random
-# from PPlay.sound import *
+from PPlay.sound import *
 
 class Gameplay():
     def __init__(self, choosen_color, janela, mouse):
@@ -364,7 +364,7 @@ class Gameplay():
         valid_moves = self.get_valid_moves() # moves = [[piece_position, {"moves": [], "attack": []}], [piece_position, {"moves": [], "attack": []}]]
         if len(valid_moves) == 0: return False
         
-        #self.janela.delay(50)
+        self.janela.delay(700)
         
         pieces_weight = {"Rei": 10, "Rainha": 9, "Torre": 5, "Cavalo": 3, "Bispo": 3, "Peão": 1}
 
