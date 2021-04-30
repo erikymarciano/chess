@@ -1,3 +1,6 @@
 __pycache__
 teste.py
 env
+*.coverage*
+*.vscode/*
+.pytest*

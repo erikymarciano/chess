@@ -1,5 +1,5 @@
-from piece import *
-from possibleplays import *
+from .piece import *
+from ..possibleplays import *
 
 class Knight(Piece):
     def __init__(self, color, image_file, frames = 4):

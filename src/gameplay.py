@@ -1,4 +1,4 @@
-from board import *
+from .board import *
 import random
 from PPlay.sound import *
 
