@@ -306,9 +306,21 @@ class Gameplay():
 
                 if self.mouse.is_button_pressed(1):
                     if index in possible_actions["move"] or index in possible_actions["attack"]:
+                        attacked_piece = self.board.board_state[index[0]][index[1]]
+
                         self.board.board_state[piece_index[0]][piece_index[1]] = None
                         self.board.board_state[index[0]][index[1]] = piece
-                        
+
+                        if piece.name == "Peão": # Define se o peão esta En Passant
+                            piece.en_passant = abs(piece_index[0] - index[0]) == 2
+                            en_passant_attack = piece_index[0] == index[0]
+                            if index in possible_actions["attack"] and attacked_piece.name == "Peão" and attacked_piece.en_passant and en_passant_attack:
+                                self.board.board_state[index[0]][index[1]] = None
+                                if piece.color == self.player1_color:
+                                    self.board.board_state[index[0] - 1][index[1]] = piece
+                                else:
+                                    self.board.board_state[index[0] + 1][index[1]] = piece
+
                         piece.moved = True # a peca fez pelo menos 1 movimento
 
                         # atualiza posicao do Rei
@@ -332,6 +344,11 @@ class Gameplay():
                         self.janela.set_background_color((0,0,0))
                         self.board.draw_board_state()
 
+                        if self.color_on_play == 'W':
+                            self.board.clean_all_en_passant('B')
+                        else:
+                            self.board.clean_all_en_passant('W')
+                        
                         try:
                             self.sound_effect.play()
                         except: pass
