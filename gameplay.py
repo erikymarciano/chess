@@ -9,9 +9,10 @@ class Gameplay():
         self.mouse = mouse
         self.player1_color = choosen_color
 
-    	try:
+        try:
             self.sound_effect = Sound("assets/sound/piece_move_sound.ogg")
-        except: pass
+        except:
+            pass
 
         self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
         self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
@@ -347,6 +348,12 @@ class Gameplay():
 
                             self.janela.set_background_color((0,0,0))
                             self.board.draw_board_state()
+
+                            try:
+                                self.sound_effect.play()
+                            except: 
+                                pass
+
                         return True
 
                     else:
@@ -410,6 +417,11 @@ class Gameplay():
 
             self.janela.set_background_color((0,0,0))
             self.board.draw_board_state()
+
+            try:
+                self.sound_effect.play()
+            except: 
+                pass
             
             return True
 
@@ -438,6 +450,11 @@ class Gameplay():
 
         self.janela.set_background_color((0,0,0))
         self.board.draw_board_state()
+
+        try:
+            self.sound_effect.play()
+        except: 
+            pass
 
         return True
 
