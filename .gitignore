@@ -4,3 +4,6 @@ env
 *.coverage*
 *.vscode/*
 .pytest*
+build
+dist
+main.spec

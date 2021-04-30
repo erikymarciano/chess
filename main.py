@@ -1,3 +1,18 @@
+import os, sys
+
+dirpath = os.getcwd()
+sys.path.append(dirpath)
+
+if getattr(sys, "frozen", False):
+    os.chdir(sys._MEIPASS)
+
+# Para gerar executavel
+# 1) pyinstaller -F main.py
+# 2) em main.spec, colocar datas=[("assets", "assets")],
+# 3) pyinstaller main.spec
+###################### 
+
+
 from PPlay.window import *
 from PPlay.gameimage import *
 from PPlay.animation import *
