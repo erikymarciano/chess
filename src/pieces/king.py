@@ -62,7 +62,7 @@ class King(Piece):
         possible_attacks = []
 
         x = (position[0] + 1)
-        y = position[0]
+        y = position[1]
         if x >= 0 and x <= 7: 
             if(board.board_state[x][y] != None and board.board_state[x][y].color != self.color):
                 possible_attacks.append((x,y))
