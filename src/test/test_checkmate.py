@@ -244,10 +244,10 @@ class TestCheckmate:
 
     @unittest.mock.patch('src.board.super')
     @unittest.mock.patch('src.pieces.piece.super')
-    def back_rank_mate(self, mock_board_super, mock_piece_super):
+    def test_back_rank_mate(self, mock_board_super, mock_piece_super):
         mock_board = Board("B")
         mock_board.board_state = [
-                [None,None,None,None,None,Tower("N", "TBD"),None,King("B", "TBD")],
+                [None,None,None,None,None,Tower("W", "TBD"),None,King("B", "TBD")],
                 [None,None,None,None,None,Pawn("B", "TBD", 1),Pawn("B", "TBD", 1), Pawn("B", "TBD", 1)],
                 [None,None,None,None,None,None,None,None],
                 [None,None,None,None,None,None,None,None],
@@ -272,10 +272,10 @@ class TestCheckmate:
     
     @unittest.mock.patch('src.board.super')
     @unittest.mock.patch('src.pieces.piece.super')
-    def smothered_mate(self, mock_board_super, mock_piece_super):
+    def test_smothered_mate(self, mock_board_super, mock_piece_super):
         mock_board = Board("B")
         mock_board.board_state = [
-                [Tower("N", "TBD"),None,None,None,None,None,Tower("N", "TBD"),King("B", "TBD")],
+                [Tower("W", "TBD"),None,None,None,None,None,Tower("W", "TBD"),King("B", "TBD")],
                 [None,None,None,None,None,Knight("W", "TBD"),Pawn("B", "TBD", 1), Pawn("B", "TBD", 1)],
                 [None,None,None,None,None,None,None,None],
                 [None,None,None,None,None,None,None,None],
@@ -300,10 +300,10 @@ class TestCheckmate:
 
     @unittest.mock.patch('src.board.super')
     @unittest.mock.patch('src.pieces.piece.super')
-    def anastatias_mate(self, mock_board_super, mock_piece_super):
+    def test_anastatias_mate(self, mock_board_super, mock_piece_super):
         mock_board = Board("B")
         mock_board.board_state = [
-                [None,None,Queen("B", "TBD"),None,None,Tower("N", "TBD"),None,None],
+                [None,None,Queen("B", "TBD"),None,None,Tower("W", "TBD"),None,None],
                 [None,None,None,None,Knight("W", "TBD"),Pawn("B", "TBD", 1),Pawn("B", "TBD", 1), King("B", "TBD")],
                 [None,None,None,None,None,None,None,None],
                 [None,None,Knight("B", "TBD"),None,None,None,None,None],
