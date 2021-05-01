@@ -14,10 +14,9 @@ class Gameplay():
         except:
             pass
 
-        self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
-        self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
-        self.board.set_position(self.janela.width/2 - self.board.width/2, self.janela.height/2 - self.board.height/2)
-        self.board.draw_board_state()
+        self.board = None
+        self.white_king_location = None
+        self.black_king_location = None
 
         self.color_on_play = "W" # as brancas comecam
 
@@ -494,6 +493,11 @@ class Gameplay():
         return False
 
     def loop(self, game_mode):
+        self.board = Board("assets/game/Top Down/Boards/Full Boards/Wood and Marble 512x552.png")
+        self.white_king_location, self.black_king_location = self.board.initial_state(self.player1_color)
+        self.board.set_position(self.janela.width/2 - self.board.width/2, self.janela.height/2 - self.board.height/2)
+        self.board.draw_board_state()
+
         if game_mode == 0:
             self.player_vs_player()
         elif game_mode == 1:
